@@ -6,7 +6,8 @@ import Signup from './pages/signup/Signup';
 import Dashboard from './pages/dashboard/Dashboard';
 import LandingPage from './pages/landingPage/LandingPage';
 import DataRekap from './pages/dataRekap/DataRekap';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRouteAdmin from './components/ProtectedRouteAdmin';
+import ProtectedRouteSuperadmin from './components/ProtectedRouteSuperadmin';
 
 function App() {
   return (
@@ -15,13 +16,16 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         {/* <Route path="/register" element={<Signup />} /> */}
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
 
         {/* Menggunakan ProtectedRoute untuk melindungi Dashboard */}
         <Route
           path="/dashboard"
-          element={<ProtectedRoute element={<Dashboard />} />}
+          element={<ProtectedRouteAdmin element={<Dashboard />} />}       
         />
+         <Route 
+          path="/register" 
+          element={<ProtectedRouteSuperadmin element={<Signup />} />}     
+         />
         <Route path="/data-rekap" element={<DataRekap />} />
       </Routes>
     </>
