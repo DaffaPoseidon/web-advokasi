@@ -1,5 +1,6 @@
 const mongoose = require("mongoose"); // Mengimpor modul Mongoose untuk menghubungkan Node.js ke MongoDB
 
+// mongoose.connect("mongodb://web-advokasi:web-advokasi/jwt_db", {
 mongoose.connect("mongodb://127.0.0.1:27017/jwt_db", {
     serverSelectionTimeoutMS: 5000 // Menghubungkan ke MongoDB pada database "node_db" dengan batas waktu koneksi 5 detik
 });
@@ -13,7 +14,3 @@ mongoose.connection.on("error", (error) => {
 });
 
 module.exports = mongoose
-
-// module.exports = mongoose.model("User", userSchema); // Mengekspor instance Mongoose untuk digunakan di file lain
-
-// test

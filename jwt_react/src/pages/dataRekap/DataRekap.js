@@ -76,10 +76,24 @@ const DataRekap = () => {
     XLSX.writeFile(wb, 'data_kasus.xlsx');
   };
 
+  // Fungsi untuk kembali ke home/landing page
+  const goToHome = () => {
+    navigate('/'); // Mengarahkan pengguna ke halaman utama
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-700 mb-6">Data Rekap Perkara</h1>
+        {/* Tombol atau Logo untuk kembali ke halaman utama */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-700 mb-6">Data Rekap Perkara</h1>
+          <button
+            onClick={goToHome} // Ketika tombol diklik, kembali ke home
+            className="text-blue-500 hover:text-blue-700 font-bold text-lg"
+          >
+            Kembali ke Beranda
+          </button>
+        </div>
 
         {/* Search bar and Download Button */}
         <div className="mb-6 flex items-center space-x-4">
@@ -150,6 +164,7 @@ const DataRekap = () => {
 };
 
 export default DataRekap;
+
 
 
 // // src/pages/dataRekap/DataRekap.js

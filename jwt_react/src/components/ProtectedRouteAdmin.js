@@ -18,7 +18,6 @@ const ProtectedRoute = ({ element, ...rest }) => {
 
     // Cek apakah role user adalah 'superadmin' atau 'admin'
     if (token.role !== 'superadmin' && token.role !== 'admin') {
-      // Jika tidak, arahkan ke halaman yang tidak memiliki akses
       navigate('/');
       return;
     }
