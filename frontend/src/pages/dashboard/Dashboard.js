@@ -39,7 +39,7 @@ const Dashboard = () => {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/cases?filter=${filter}`,
+        `${process.env.REACT_APP_API_BASE_URL}/cases?filter=${filter}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -103,7 +103,7 @@ const Dashboard = () => {
     // });
 
     try {
-      const response = await fetch(`${API_BASE_URL}/cases/${formData._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/cases/${formData._id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

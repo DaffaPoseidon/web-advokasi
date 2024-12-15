@@ -18,7 +18,7 @@ const DataRekap = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/cases?filter=`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/cases?filter=`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

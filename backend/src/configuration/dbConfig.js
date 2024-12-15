@@ -1,11 +1,8 @@
 const mongoose = require("mongoose"); // Mengimpor modul Mongoose untuk menghubungkan Node.js ke MongoDB
 
 require('dotenv').config()
-console.log(process.env.DB_URL) // remove this after you've confirmed it is working
 
-const dbUrl = process.env.DB_URL
-
-mongoose.connect("mongodb+srv://agussuda0568:t01Mk45CW62rosaY@web-advokasi.ltixt.mongodb.net/jwt_db", {
+mongoose.connect(process.env.DB_URL, {
     // mongoose.connect("mongodb://127.0.0.1:27017/jwt_db", {
     serverSelectionTimeoutMS: 5000 // Menghubungkan ke MongoDB pada database "node_db" dengan batas waktu koneksi 5 detik
 });
