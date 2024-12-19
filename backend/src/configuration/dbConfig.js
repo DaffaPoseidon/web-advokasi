@@ -2,8 +2,8 @@ const mongoose = require("mongoose"); // Mengimpor modul Mongoose untuk menghubu
 
 require('dotenv').config()
 
-mongoose.connect(process.env.DB_URL, {
-    // mongoose.connect("mongodb://127.0.0.1:27017/jwt_db", {
+// mongoose.connect(process.env.DB_URL, {
+mongoose.connect("mongodb://127.0.0.1:27017/jwt_db", {
     serverSelectionTimeoutMS: 5000 // Menghubungkan ke MongoDB pada database "node_db" dengan batas waktu koneksi 5 detik
 });
 

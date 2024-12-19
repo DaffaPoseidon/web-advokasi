@@ -6,6 +6,13 @@ const Case = require("../models/Case");
 const storage = multer.memoryStorage(); // Gunakan penyimpanan memori
 const upload = multer({ storage }); // Buat instance multer dengan penyimpanan memori
 
+const headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Content-Type, Authorization',
+  'Access-Control-Allow-Methods': '*',
+  "Content-Type": "application/json"
+};
+
 const createCase = async (req, res) => {
   try {
     const { noPerkara, penggugat, objekGugatan, mdnSebagai, status, posisiPerkara } = req.body;
