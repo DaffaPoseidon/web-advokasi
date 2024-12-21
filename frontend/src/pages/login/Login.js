@@ -40,6 +40,7 @@ const Login = () => {
         body: JSON.stringify(formData),
       });
 
+      // const result = await response.json();
       const result = await response.json();
 
       if (response.ok) {
@@ -57,30 +58,6 @@ const Login = () => {
       console.error('Error during login:', error.message);
     }
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault()
-  //   try {
-  //     const response = await fetch("http://localhost:5000/auth/login", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(formData)
-  //     })
-  //     const result = await response.json();
-  //     if (result.user._id) {
-  //       navigate("/dashboard")
-  //       const user = JSON.stringify(result.user)
-  //       localStorage.setItem("user", user)
-  //       localStorage.setItem("token", result.token)
-  //     } else {
-  //       console.error("Signup failed")
-  //     }
-  //   } catch (error) {
-  //     console.error(error.message)
-  //   }
-  // }
 
   const handleHomeClick = () => {
     navigate("/")
