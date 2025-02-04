@@ -131,7 +131,7 @@ const Dashboard = () => {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
-        },
+      },
         body: formDataToSend,
       });
 

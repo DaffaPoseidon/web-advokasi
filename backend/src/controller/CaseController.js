@@ -1,6 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 const Case = require("../models/Case");
+const User = require("../models/User");
 
 // Konfigurasi multer untuk menyimpan file di memori
 const storage = multer.memoryStorage(); // Gunakan penyimpanan memori
@@ -15,7 +16,9 @@ const headers = {
 
 const createCase = async (req, res) => {
   try {
-    const { noPerkara, penggugat, objekGugatan, mdnSebagai, status, posisiPerkara, penggugah } = req.body;
+    const userId = req.user.id;
+
+    const { noPerkara, penggugat, objekGugatan, mdnSebagai, status, posisiPerkara } = req.body;
 
     const newCase = new Case({
       noPerkara,
@@ -24,7 +27,7 @@ const createCase = async (req, res) => {
       mdnSebagai,
       status,
       posisiPerkara,
-      penggugah,
+      penggugah: userId, // Simpan ID user yang mengunggah kasus
       file: req.file ? req.file.buffer : null, // Simpan file sebagai buffer
       fileName: req.file ? req.file.originalname : null, // Simpan nama file
     });
@@ -42,7 +45,8 @@ const getAllCases = async (req, res) => {
     const query = filter ? { status: filter } : {};
 
     const cases = await Case.find(query)
-      .sort({ createdAt: 1 }) // Urutkan ascending berdasarkan waktu input
+      .populate("penggugah", "firstName lastName email role") // ✅ Populate data user
+      .sort({ createdAt: 1 }) // Urutkan berdasarkan waktu input (ascending)
       .skip((page - 1) * 10000)
       .limit(10000);
 
@@ -55,40 +59,44 @@ const getAllCases = async (req, res) => {
 const updateCase = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("🚀 ~ updateCase ~ id:", id)
+    const userId = req.user.id; // ✅ Ambil ID pengguna yang sedang login
 
-    // console.log("Token:", req.headers.authorization);
-    console.log("Data diterima untuk update:", req.body); // Debug body request
+    console.log("🚀 ~ updateCase ~ id:", id);
+    console.log("Data diterima untuk update:", req.body);
+
     if (req.file) {
-      console.log("File diterima untuk update:", req.file.originalname); // Debug file
+      console.log("File diterima untuk update:", req.file.originalname);
     }
 
-    // Perbarui dokumen di MongoDB
+    // Data yang akan diperbarui
     const updatedData = {
       ...req.body, // Data dari form
+      penggugah: userId, // ✅ Simpan user yang mengupdate kasus
     };
 
     if (req.file) {
-      updatedData.file = req.file.buffer; // Tambahkan file jika ada
-      updatedData.fileName = req.file.originalname; // Tambahkan nama file jika ada
+      updatedData.file = req.file.buffer;
+      updatedData.fileName = req.file.originalname;
     }
 
-    const updatedCase = await Case.findByIdAndUpdate(id, updatedData, {
-      new: true, // Kembalikan dokumen yang diperbarui
-    });
+    // Update case
+    const updatedCase = await Case.findByIdAndUpdate(id, updatedData, { new: true });
 
     if (!updatedCase) {
       return res.status(404).json({ message: "Kasus tidak ditemukan." });
     }
 
-    console.log("Kasus berhasil diperbarui:", updatedCase); // Debug hasil update
+    // ✅ Pastikan daftar kasus pada User juga diperbarui
+    await User.findByIdAndUpdate(userId, { $addToSet: { cases: updatedCase._id } });
+
+    console.log("Kasus berhasil diperbarui:", updatedCase);
     res.status(200).json({ message: "Kasus berhasil diperbarui", case: updatedCase });
+
   } catch (error) {
     console.error("Gagal memperbarui kasus:", error.message);
     res.status(500).json({ message: "Gagal memperbarui kasus", error: error.message });
   }
 };
-
 
 const getFile = async (req, res) => {
   try {

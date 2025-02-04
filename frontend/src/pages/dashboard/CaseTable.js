@@ -45,7 +45,7 @@ const CaseTable = ({ cases, onEdit, onDelete, refreshCases }) => {
               <td className="border border-gray-300 px-4 py-2">{item.status}</td>
               <td className="border border-gray-300 px-4 py-2">{item.posisiPerkara}</td>
               <td className="border border-gray-300 px-4 py-2">
-                {item.penggugah}
+                {item.penggugah ? `${item.penggugah.firstName} ${item.penggugah.lastName}` : "Tidak Diketahui"}
               </td>
               <td className="border border-gray-300 px-4 py-2">
                 {item.file ? (
