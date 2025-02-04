@@ -1,7 +1,13 @@
+import React from 'react';
+
 const CaseTable = ({ cases, onEdit, onDelete, refreshCases }) => {
+  // Ambil data user dari localStorage dan parse ke JSON
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userRole = user?.role; // Ambil role dari user (bisa undefined jika tidak ada user)
+
   const handleDelete = async (id) => {
     if (!onDelete) return;
-    
+
     await onDelete(id);
     if (refreshCases) {
       refreshCases(); // Panggil refresh setelah delete berhasil
@@ -40,9 +46,12 @@ const CaseTable = ({ cases, onEdit, onDelete, refreshCases }) => {
                 <button className="bg-yellow-500 text-white px-4 py-2 rounded" onClick={() => onEdit(item)}>
                   Edit
                 </button>
-                <button className="bg-red-500 text-white px-4 py-2 rounded ml-2" onClick={() => handleDelete(item._id)}>
-                  Delete
-                </button>
+                {/* Tombol Delete hanya ditampilkan jika role = superadmin */}
+                {userRole === "superadmin" && (
+                  <button className="bg-red-500 text-white px-4 py-2 rounded ml-2" onClick={() => handleDelete(item._id)}>
+                    Delete
+                  </button>
+                )}
               </td>
             </tr>
           ))}
@@ -53,6 +62,7 @@ const CaseTable = ({ cases, onEdit, onDelete, refreshCases }) => {
 };
 
 export default CaseTable;
+
 
 // import API_BASE_URL from '../../config';
 
