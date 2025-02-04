@@ -64,6 +64,23 @@ const Dashboard = () => {
     fetchCases();
   }, [fetchCases]);
 
+  const handleDownloadExcel = () => {
+    const modifiedCases = cases.map((caseItem, index) => ({
+      Nomor: index + 1,
+      'No Perkara': caseItem.noPerkara,
+      Penggugat: caseItem.penggugat,
+      'Objek Gugatan': caseItem.objekGugatan,
+      'MDN Sebagai': caseItem.mdnSebagai,
+      Status: caseItem.status,
+      'Posisi Perkara': caseItem.posisiPerkara,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(modifiedCases);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Data Kasus');
+    XLSX.writeFile(wb, 'data_kasus.xlsx');
+  };
+
   // Fungsi delete kasus
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
@@ -167,6 +184,12 @@ const Dashboard = () => {
             onChange={handleSearchChange}
             className="px-4 py-2 w-full sm:w-80 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <button
+            onClick={handleDownloadExcel}
+            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+          >
+            Download Semua Data Dalam Excel
+          </button>
         </div>
 
         {/* Tabel kasus */}
@@ -184,6 +207,8 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+// Dashboard.js
 
 // import React, { useState, useEffect, useCallback } from 'react';
 // import CaseForm from './CaseForm';
@@ -226,10 +251,10 @@ export default Dashboard;
 
 //     try {
 //       const response = await fetch(
-//         `${process.env.REACT_APP_API_BASE_URL}/cases?filter=${filter}`,
+//         ${process.env.REACT_APP_API_BASE_URL}/cases?filter=${filter},
 //         {
 //           headers: {
-//             Authorization: `Bearer ${token}`,
+//             Authorization: Bearer ${token},
 //           },
 //         }
 //       );
@@ -280,11 +305,20 @@ export default Dashboard;
 //         formDataToSend.append(key, localFormData[key]);
 //       }
 //     });
+
+//     // Object.entries(formData).forEach(([key, value]) => {
+//     //   if (key === 'file' && value instanceof File) {
+//     //     formDataToSend.append(key, value);
+//     //   } else {
+//     //     formDataToSend.append(key, value);
+//     //   }
+//     // });
+
 //     try {
-//       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/cases/${formData._id}`, {
+//       const response = await fetch(${process.env.REACT_APP_API_BASE_URL}/cases/${formData._id}, {
 //         method: 'PUT',
 //         headers: {
-//           Authorization: `Bearer ${token}`,
+//           Authorization: Bearer ${token},
 //         },
 //         body: formDataToSend,
 //       });
