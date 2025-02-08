@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CaseForm from './CaseForm';
 import CaseTable from './CaseTable';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,7 @@ const Dashboard = () => {
     posisiPerkara: '',
   });
   const [editMode, setEditMode] = useState(false);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const initialFormState = {
@@ -27,6 +28,7 @@ const Dashboard = () => {
     mdnSebagai: '',
     status: 'Sedang Berjalan',
     posisiPerkara: 'Banding',
+    file: null,
   };
 
   // Fetch daftar kasus
@@ -117,35 +119,34 @@ const Dashboard = () => {
   const handleUpdate = async (localFormData) => {
     const token = localStorage.getItem('token');
     const formDataToSend = new FormData();
-
+  
     Object.keys(localFormData).forEach((key) => {
-      if (key === 'file') {
-        for (let i = 0; i < localFormData.file.length; i++) {
-          formDataToSend.append('files', localFormData.file[i]); // Kirim banyak file
-        }
+      if (key === 'file' && localFormData.file) {
+        Array.from(localFormData.file).forEach((file) => {
+          formDataToSend.append('files', file);
+        });
       } else {
         formDataToSend.append(key, localFormData[key]);
       }
-      // if (key === 'file' && localFormData[key] instanceof File) {
-      //   formDataToSend.append(key, localFormData[key]);
-      // } else {
-      //   formDataToSend.append(key, localFormData[key]);
-      // }
     });
-
+  
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/cases/${localFormData._id}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formDataToSend,
-      });
-
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/cases/${localFormData._id}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formDataToSend,
+        }
+      );
+  
       if (response.ok) {
-        await fetchCases(); // Refresh data setelah update
-        setEditMode(false); // Keluar dari mode edit
+        await fetchCases();
+        setEditMode(false);
         setFormData(initialFormState); // Reset form
+        fileInputRef.current.value = ''; // Reset input file
       } else {
         const errorResult = await response.json();
         console.error('Gagal memperbarui kasus:', errorResult.message);
@@ -173,11 +174,13 @@ const Dashboard = () => {
         </div>
 
         {/* Form untuk menambah atau mengedit kasus */}
+        // Di Dashboard.js
         <CaseForm
+          initialFormState={initialFormState}
           formData={formData}
           setFormData={setFormData}
           editMode={editMode}
-          handleUpdate={handleUpdate} // Pastikan fungsi ini dikirim ke CaseForm
+          handleUpdate={handleUpdate}
           refreshCases={fetchCases}
           setEditMode={setEditMode}
         />
