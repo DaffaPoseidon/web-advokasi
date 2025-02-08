@@ -32,28 +32,34 @@ const CaseForm = ({ refreshCases, editMode, formData, setFormData, handleUpdate,
     const handleFileChange = (e) => {
         setLocalFormData((prevData) => ({
             ...prevData,
-            file: e.target.files[0],
+            file: e.target.files, // Simpan banyak file
+            // file: e.target.files[0],
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (editMode && handleUpdate) {  // Pastikan handleUpdate ada sebelum dipanggil
+    
+        if (editMode && handleUpdate) {
             await handleUpdate(localFormData);
         } else {
             const token = localStorage.getItem('token');
-
-            const user = JSON.parse(localStorage.getItem("user")); // Ambil data user dari localStorage
-            const penggugah = user ? user._id : "Unknown"; // Ambil firstName user
-
+            const user = JSON.parse(localStorage.getItem("user"));
+            const penggugah = user ? user._id : "Unknown";
+    
             const formDataToSend = new FormData();
             Object.keys(localFormData).forEach((key) => {
-                formDataToSend.append(key, localFormData[key]);
+                if (key === 'file') {
+                    for (let i = 0; i < localFormData.file.length; i++) {
+                        formDataToSend.append('files', localFormData.file[i]); // Kirim banyak file
+                    }
+                } else {
+                    formDataToSend.append(key, localFormData[key]);
+                }
             });
-
-            formDataToSend.append("penggugah", penggugah); // Tambahkan nama penggugah
-
+    
+            formDataToSend.append("penggugah", penggugah);
+    
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/cases`, {
                     method: 'POST',
@@ -62,7 +68,7 @@ const CaseForm = ({ refreshCases, editMode, formData, setFormData, handleUpdate,
                     },
                     body: formDataToSend,
                 });
-
+    
                 if (response.ok) {
                     console.log('Kasus berhasil ditambahkan');
                     refreshCases();
@@ -76,6 +82,47 @@ const CaseForm = ({ refreshCases, editMode, formData, setFormData, handleUpdate,
             }
         }
     };
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     if (editMode && handleUpdate) {  // Pastikan handleUpdate ada sebelum dipanggil
+    //         await handleUpdate(localFormData);
+    //     } else {
+    //         const token = localStorage.getItem('token');
+
+    //         const user = JSON.parse(localStorage.getItem("user")); // Ambil data user dari localStorage
+    //         const penggugah = user ? user._id : "Unknown"; // Ambil firstName user
+
+    //         const formDataToSend = new FormData();
+    //         Object.keys(localFormData).forEach((key) => {
+    //             formDataToSend.append(key, localFormData[key]);
+    //         });
+
+    //         formDataToSend.append("penggugah", penggugah); // Tambahkan nama penggugah
+
+    //         try {
+    //             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/cases`, {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //                 body: formDataToSend,
+    //             });
+
+    //             if (response.ok) {
+    //                 console.log('Kasus berhasil ditambahkan');
+    //                 refreshCases();
+    //                 setLocalFormData(initialFormState);
+    //             } else {
+    //                 const errorResult = await response.json();
+    //                 console.error('Gagal menambahkan kasus:', errorResult.message || 'Unknown error');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error:', error.message);
+    //         }
+    //     }
+    // };
 
     const handleCancel = () => {
         setLocalFormData(initialFormState);
@@ -110,7 +157,8 @@ const CaseForm = ({ refreshCases, editMode, formData, setFormData, handleUpdate,
                     <option value="Kasasi">Kasasi</option>
                     <option value="PK Aktif">PK Aktif</option>
                 </select>
-                <input type="file" name="file" onChange={handleFileChange}
+                <input type="file" name="file" multiple 
+                onChange={handleFileChange}
                     className="border border-gray-300 rounded p-2" />
             </div>
 

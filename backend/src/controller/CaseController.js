@@ -20,6 +20,12 @@ const createCase = async (req, res) => {
 
     const { noPerkara, penggugat, objekGugatan, mdnSebagai, status, posisiPerkara } = req.body;
 
+    // Simpan semua file yang diunggah
+    const uploadedFiles = req.files.map((file) => ({
+      fileName: file.originalname,
+      fileData: file.buffer,
+    }));
+
     const newCase = new Case({
       noPerkara,
       penggugat,
@@ -28,8 +34,9 @@ const createCase = async (req, res) => {
       status,
       posisiPerkara,
       penggugah: userId, // Simpan ID user yang mengunggah kasus
-      file: req.file ? req.file.buffer : null, // Simpan file sebagai buffer
-      fileName: req.file ? req.file.originalname : null, // Simpan nama file
+      files: uploadedFiles, // Simpan banyak file
+      // file: req.file ? req.file.buffer : null,
+      // fileName: req.file ? req.file.originalname : null,
     });
 
     const savedCase = await newCase.save();
@@ -74,10 +81,18 @@ const updateCase = async (req, res) => {
       penggugah: userId, // ✅ Simpan user yang mengupdate kasus
     };
 
-    if (req.file) {
-      updatedData.file = req.file.buffer;
-      updatedData.fileName = req.file.originalname;
+    // Jika ada file yang diunggah, proses sebagai array
+    if (req.files && req.files.length > 0) {
+      updatedData.files = req.files.map(file => ({
+        fileName: file.originalname,
+        fileData: file.buffer,
+      }));
     }
+    
+    // if (req.file) {
+    //   updatedData.file = req.file.buffer;
+    //   updatedData.fileName = req.file.originalname;
+    // }
 
     // Update case
     const updatedCase = await Case.findByIdAndUpdate(id, updatedData, { new: true });
