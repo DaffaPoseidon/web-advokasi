@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CaseForm from './CaseForm';
 import CaseTable from './CaseTable';
 import { useNavigate } from 'react-router-dom';
-import API_BASE_URL from '../../config';
 import * as XLSX from 'xlsx';
 
 const Dashboard = () => {
@@ -161,6 +160,7 @@ const Dashboard = () => {
   };
 
   return (
+    
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
@@ -174,7 +174,6 @@ const Dashboard = () => {
         </div>
 
         {/* Form untuk menambah atau mengedit kasus */}
-        // Di Dashboard.js
         <CaseForm
           initialFormState={initialFormState}
           formData={formData}
