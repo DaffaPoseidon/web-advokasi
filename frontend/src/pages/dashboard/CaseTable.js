@@ -53,13 +53,21 @@ const CaseTable = ({ cases, onEdit, onDelete, refreshCases }) => {
                     {item.files.map((file, index) => (
                       <li key={index}>
                         <a
-                          href={`${process.env.REACT_APP_API_BASE_URL}/cases/${item._id}/files/${index}`}
+                          href={`${process.env.REACT_APP_BACKEND_BASEURL}/api/cases/${item._id}/files/${index}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 underline"
                         >
                           {file.fileName}
                         </a>
+                        {/* <a
+                          href={`${process.env.REACT_APP_API_BASE_URL}/cases/${item._id}/files/${index}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline"
+                        >
+                          {file.fileName}
+                        </a> */}
                       </li>
                     ))}
                   </ul>

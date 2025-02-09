@@ -1,10 +1,12 @@
 const express = require("express"); // Mengimpor modul Express untuk membuat aplikasi server Node.js
+const mongoose = require("mongoose");
 const signupRoute = require("./routes/Signup")
 const loginRoute = require("./routes/Login")
 const authenticatedRoute = require("./routes/Authenticated")
 const bodyParser = require("body-parser")
 const cors = require("cors")
 const {createSuperAdminAccount} = require("./scripts/setup")
+require("dotenv").config(); // Load .env file
 
 // Baru
 const caseRoutes = require("./routes/CaseRoutes");
@@ -12,6 +14,7 @@ const caseRoutes = require("./routes/CaseRoutes");
 
 const app = express(); // Membuat instance aplikasi Express
 const PORT = process.env.PORT; // Menentukan port untuk server
+const MONGO_URL = process.env.MONGO_URL || "mongodb://192.168.18.56:27017/jwt_db";
 
 app.use(cors())
 // app.use(bodyParser.json());
@@ -30,6 +33,20 @@ app.use("/api", authenticatedRoute)
 app.use("/api/cases", caseRoutes);
 // 
 
-app.listen(PORT, () => {
-    console.log(`Server is running on: localhost:${PORT}`); // Menjalankan server dan menampilkan URL server ke konsol
-});
+mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log("MongoDB Connected");
+
+        // Buat SuperAdmin setelah database terhubung
+        createSuperAdminAccount();
+
+        // Start server setelah koneksi berhasil
+        app.listen(PORT, () => {
+            console.log(`Server is running on: http://192.168.18.56:${PORT}`);
+        });
+    })
+    .catch(err => console.error("MongoDB connection error:", err));
+
+// app.listen(PORT, () => {
+//     console.log(`Server is running on: http://192.168.18.56:${PORT}`); // Menjalankan server dan menampilkan URL server ke konsol
+// });

@@ -131,6 +131,26 @@ const getFile = async (req, res) => {
   }
 };
 
+const getFileByIndex = async (req, res) => {
+  try {
+      const { caseId, fileIndex } = req.params;
+      const caseData = await Case.findById(caseId);
+
+      if (!caseData || !caseData.files[fileIndex]) {
+          return res.status(404).json({ message: "File tidak ditemukan." });
+      }
+
+      const file = caseData.files[fileIndex]; // Ambil file berdasarkan indeks
+      res.setHeader("Content-Disposition", `attachment; filename="${file.fileName}"`);
+      res.setHeader("Content-Type", "application/octet-stream");
+      res.send(file.fileData); // Kirim file dalam bentuk buffer
+  } catch (err) {
+      console.error("Error fetching file:", err.message);
+      res.status(500).json({ message: "Terjadi kesalahan server" });
+  }
+};
+
+
 const deleteCase = async (req, res) => {
   try {
     const { id } = req.params;
@@ -152,6 +172,7 @@ module.exports = {
   getAllCases,
   updateCase,
   getFile, // Tambahkan fungsi getFile
+  getFileByIndex,
   deleteCase, // Menambahkan fungsi delete
   upload,
 };

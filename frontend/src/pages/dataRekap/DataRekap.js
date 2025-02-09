@@ -142,7 +142,7 @@ const DataRekap = () => {
                   <td className="border border-gray-300 px-4 py-2">
                     {caseItem.file ? (
                       <a
-                        href={`${API_BASE_URL}/cases/${caseItem._id}/file`}
+                        href={`${process.env.REACT_APP_API_BASE_URL}/cases/${caseItem._id}/file`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-500 underline"
