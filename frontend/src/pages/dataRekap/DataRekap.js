@@ -202,39 +202,45 @@
 
 // export default DataRekap;
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as XLSX from 'xlsx';
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
+
+const user = JSON.parse(localStorage.getItem("user"));
+const userRole = user?.role; // Ambil role dari user (bisa undefined jika tidak ada user)
 
 const DataRekap = () => {
   const [cases, setCases] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   const fetchCases = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
+    const token = localStorage.getItem("token");
+    // if (!token) {
+    //   navigate('/login');
+    //   return;
+    // }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/cases`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/cases`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (response.status === 401 || response.status === 403) {
-        console.error('Token invalid, redirecting to login');
-        navigate('/login');
-        return;
-      }
+      // if (response.status === 401 || response.status === 403) {
+      //   console.error('Token invalid, redirecting to login');
+      //   navigate('/login');
+      //   return;
+      // }
 
       const data = await response.json();
       setCases(data.cases);
     } catch (error) {
-      console.error('Error fetching cases:', error.message);
+      console.error("Error fetching cases:", error.message);
     }
   }, [navigate]);
 
@@ -245,27 +251,29 @@ const DataRekap = () => {
   const handleDownloadExcel = () => {
     const modifiedCases = cases.map((caseItem, index) => ({
       Nomor: index + 1,
-      'No Perkara': caseItem.noPerkara,
+      "No Perkara": caseItem.noPerkara,
       Penggugat: caseItem.penggugat,
-      'Objek Gugatan': caseItem.objekGugatan,
-      'MDN Sebagai': caseItem.mdnSebagai,
+      "Objek Gugatan": caseItem.objekGugatan,
+      "MDN Sebagai": caseItem.mdnSebagai,
       Status: caseItem.status,
-      'Posisi Perkara': caseItem.posisiPerkara,
+      "Posisi Perkara": caseItem.posisiPerkara,
     }));
 
     const ws = XLSX.utils.json_to_sheet(modifiedCases);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Data Kasus');
-    XLSX.writeFile(wb, 'data_kasus.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, "Data Kasus");
+    XLSX.writeFile(wb, "data_kasus.xlsx");
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-700 mb-6">Data Rekap Perkara</h1>
+          <h1 className="text-3xl font-bold text-gray-700 mb-6">
+            Data Rekap Perkara
+          </h1>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="text-blue-500 hover:text-blue-700 font-bold text-lg"
           >
             Kembali ke Beranda
@@ -280,12 +288,14 @@ const DataRekap = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="px-4 py-2 w-full sm:w-80 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button
-            onClick={handleDownloadExcel}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-          >
-            Download Semua Data Dalam Excel
-          </button>
+          {["admin", "superadmin"].includes(userRole) && (
+            <button
+              onClick={handleDownloadExcel}
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            >
+              Download Semua Data Dalam Excel
+            </button>
+          )}
         </div>
 
         <div className="bg-white shadow rounded p-6 overflow-x-auto">
@@ -296,47 +306,75 @@ const DataRekap = () => {
                 <th className="border border-gray-300 px-4 py-2">No</th>
                 <th className="border border-gray-300 px-4 py-2">No Perkara</th>
                 <th className="border border-gray-300 px-4 py-2">Penggugat</th>
-                <th className="border border-gray-300 px-4 py-2">Objek Gugatan</th>
-                <th className="border border-gray-300 px-4 py-2">MDN Sebagai</th>
+                <th className="border border-gray-300 px-4 py-2">
+                  Objek Gugatan
+                </th>
+                <th className="border border-gray-300 px-4 py-2">
+                  MDN Sebagai
+                </th>
                 <th className="border border-gray-300 px-4 py-2">Status</th>
-                <th className="border border-gray-300 px-4 py-2">Posisi Perkara</th>
-                <th className="border border-gray-300 px-4 py-2">Download</th>
+                <th className="border border-gray-300 px-4 py-2">
+                  Posisi Perkara
+                </th>
+                {["admin", "superadmin"].includes(userRole) && (
+                  <th className="border border-gray-300 px-4 py-2">Download</th>
+                )}
               </tr>
             </thead>
             <tbody>
-              {cases.filter(caseItem =>
-                caseItem.penggugat.toLowerCase().includes(searchQuery.toLowerCase())
-              ).map((caseItem, index) => (
-                <tr key={caseItem._id}>
-                  <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
-                  <td className="border border-gray-300 px-4 py-2">{caseItem.noPerkara}</td>
-                  <td className="border border-gray-300 px-4 py-2">{caseItem.penggugat}</td>
-                  <td className="border border-gray-300 px-4 py-2">{caseItem.objekGugatan}</td>
-                  <td className="border border-gray-300 px-4 py-2">{caseItem.mdnSebagai}</td>
-                  <td className="border border-gray-300 px-4 py-2">{caseItem.status}</td>
-                  <td className="border border-gray-300 px-4 py-2">{caseItem.posisiPerkara}</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {caseItem.files.length > 0 ? (
-                      <ul>
-                        {caseItem.files.map((file, index) => (
-                          <li key={index}>
-                            <a
-                              href={`${process.env.REACT_APP_BACKEND_BASEURL}/api/cases/${caseItem._id}/files/${index}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 underline"
-                            >
-                              {file.fileName}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      'Tidak ada file'
+              {cases
+                .filter((caseItem) =>
+                  caseItem.penggugat
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())
+                )
+                .map((caseItem, index) => (
+                  <tr key={caseItem._id}>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {index + 1}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {caseItem.noPerkara}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {caseItem.penggugat}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {caseItem.objekGugatan}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {caseItem.mdnSebagai}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {caseItem.status}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {caseItem.posisiPerkara}
+                    </td>
+                    {["admin", "superadmin"].includes(userRole) && (
+                      <td className="border border-gray-300 px-4 py-2">
+                        {caseItem.files.length > 0 ? (
+                          <ul>
+                            {caseItem.files.map((file, index) => (
+                              <li key={index}>
+                                <a
+                                  href={`${process.env.REACT_APP_BACKEND_BASEURL}/api/cases/${caseItem._id}/files/${index}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-500 underline"
+                                >
+                                  {file.fileName}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          "Tidak ada file"
+                        )}
+                      </td>
                     )}
-                  </td>
-                </tr>
-              ))}
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
