@@ -30,7 +30,7 @@ const CaseTable = ({ cases, onEdit, onDelete, refreshCases }) => {
             <th className="border border-gray-300 px-4 py-2">Status</th>
             <th className="border border-gray-300 px-4 py-2">Posisi Perkara</th>
             {["admin", "superadmin"].includes(userRole) && (
-              <th className="border border-gray-300 px-4 py-2">Akun Penggugah</th>
+              <th className="border border-gray-300 px-4 py-2">Akun Pengunggah</th>
             )}
             <th className="border border-gray-300 px-4 py-2">Download</th>
             {["admin", "superadmin"].includes(userRole) && (
