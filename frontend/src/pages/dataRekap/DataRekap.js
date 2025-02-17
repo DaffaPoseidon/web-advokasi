@@ -205,10 +205,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 
-const user = JSON.parse(localStorage.getItem("user"));
+const DataRekap = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
 const userRole = user?.role; // Ambil role dari user (bisa undefined jika tidak ada user)
 
-const DataRekap = () => {
   const [cases, setCases] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
