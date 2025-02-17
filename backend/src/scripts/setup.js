@@ -9,9 +9,9 @@ async function createSuperAdminAccount() {
         } else {
             const newSuperAdmin = new User({
                 firstName: "Superadmin",
-                lastName: "123",
+                lastName: "",
                 email: "superadmin@test.com",
-                password: await bcrypt.hash("superadmin123", 13),
+                password: await bcrypt.hash("superadmin123", 10),
                 role: "superadmin"
             })
             await newSuperAdmin.save()

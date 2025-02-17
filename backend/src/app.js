@@ -23,8 +23,6 @@ app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json({ limit: "50mb" })); // Tingkatkan batas JSON payload
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true })); // Tingkatkan batas URL-encoded
 
-createSuperAdminAccount()
-
 app.use("/user", signupRoute);
 app.use("/auth", loginRoute)
 app.use("/api", authenticatedRoute)

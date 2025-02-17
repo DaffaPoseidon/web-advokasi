@@ -317,6 +317,7 @@ const CaseForm = ({ initialFormState, refreshCases, editMode, formData, setFormD
                     </select>
                     <select name="posisiPerkara" value={localFormData.posisiPerkara}
                         onChange={handleInputChange} className="border border-gray-300 rounded p-2" required>
+                        <option value="Tingkat Pertama">Tingkat Pertama</option>
                         <option value="Banding">Banding</option>
                         <option value="Kasasi">Kasasi</option>
                         <option value="PK Aktif">PK Aktif</option>
