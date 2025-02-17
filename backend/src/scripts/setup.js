@@ -11,7 +11,7 @@ async function createSuperAdminAccount() {
                 firstName: "Superadmin",
                 lastName: "123",
                 email: "superadmin@test.com",
-                password: await bcrypt.hash("superadmin", 10),
+                password: await bcrypt.hash("superadmin123", 13),
                 role: "superadmin"
             })
             await newSuperAdmin.save()

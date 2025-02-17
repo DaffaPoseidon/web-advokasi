@@ -14,7 +14,7 @@ const caseRoutes = require("./routes/CaseRoutes");
 
 const app = express(); // Membuat instance aplikasi Express
 const PORT = process.env.PORT; // Menentukan port untuk server
-const MONGO_URL = process.env.MONGO_URL || "mongodb://192.168.18.56:27017/jwt_db";
+const MONGO_URL = process.env.MONGO_URL || "mongodb://192.168.1.3:27017/jwt_db";
 
 app.use(cors())
 // app.use(bodyParser.json());
@@ -42,7 +42,7 @@ mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 
         // Start server setelah koneksi berhasil
         app.listen(PORT, () => {
-            console.log(`Server is running on: http://192.168.18.56:${PORT}`);
+            console.log(`Server is running on: http://192.168.1.3:${PORT}`);
         });
     })
     .catch(err => console.error("MongoDB connection error:", err));
